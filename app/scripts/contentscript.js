@@ -17,6 +17,7 @@ $(function() {
     var modelatorList = iframe.find("[aria-label=モデレーター]").length;
     console.log("モデレータ数"+modelatorList);
 
+    // スパナマークコメント(モデレータ)を取得
     var modelator = iframe.find("[aria-label=モデレーター]").closest("yt-live-chat-text-message-renderer");
 
     iframe.find("yt-live-chat-ticker-renderer").after(modelator)
