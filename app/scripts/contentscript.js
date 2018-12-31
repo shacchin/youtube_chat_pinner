@@ -14,6 +14,7 @@ $(function() {
     var length = iframe.find("[id=author-name]").length;
     console.log("全体コメント数："+length)
 
+    // モデレータカウント
     var modelatorList = iframe.find("[aria-label=モデレーター]").length;
     console.log("モデレータ数"+modelatorList);
 
