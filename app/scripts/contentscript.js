@@ -5,6 +5,9 @@ var $ = require('jQuery');
 
 console.log('comment pinner loaded')
 
+/**
+ * コメントを固定する
+ */
 function pinComment() {
   var commentFrame = $('iframe').contents();
 
@@ -20,6 +23,12 @@ function pinComment() {
 }
 
 const setIntervalId = setInterval(setObserver, 1000);
+
+function addDeletePinnedCommentEvent(document){
+  $(document).on('click', '#pinned-comment', () => {
+    $(event.target).remove();
+  });
+}
 
 function setObserver() {
   if ($('#chatframe').length) {
@@ -40,9 +49,7 @@ function setObserver() {
           pinComment();
 
           // 削除用クリックイベントの追加
-          $(doc).on('click', '#pinned-comment', () => {
-            $(event.target).remove();
-          });
+          addDeletePinnedCommentEvent(doc)
         });
       });
 
