@@ -1,63 +1,70 @@
 // Enable chromereload by uncommenting this line:
 // import 'chromereload/devonly'
 
-var $ = require('jQuery');
+const $ = require('jQuery');
 
-console.log('comment pinner loaded')
+// コメント欄読み込み待ち
+const setIntervalId = setInterval(startObserve, 1000);
 
 /**
- * コメントを固定する
+ * DOM監視オブジェクトの設定
  */
-function pinComment() {
-  var commentFrame = $('iframe').contents();
-
-  // モデレータコメント(スパナ)を取得
-  var modelator = commentFrame
-    .find('[aria-label=モデレーター]')
-    .closest('yt-live-chat-text-message-renderer');
-
-  modelator.attr('id', 'pinned-comment');
-
-  // モデレータコメントをコメント欄上部に表示
-  commentFrame.find('yt-live-chat-ticker-renderer').after(modelator);
-}
-
-const setIntervalId = setInterval(setObserver, 1000);
-
-function addDeletePinnedCommentEvent(document){
-  $(document).on('click', '#pinned-comment', () => {
-    $(event.target).remove();
-  });
-}
-
-function setObserver() {
+function startObserve() {
   if ($('#chatframe').length) {
+    // setInterval解除
     clearInterval(setIntervalId);
 
     $('#chatframe').on('load', () => {
-      // iframeのdocument取得
-      var iframe = document.getElementById('chatframe');
+      const chatFrame = document.getElementById('chatframe');
 
-      const doc = iframe.contentWindow.document; // iframe内文書の document
+      const chatFrameDocument = chatFrame.contentWindow.document; // iframe内文書の document
 
-      // コメント一覧取得
-      const comments = doc.getElementById('item-offset');
+      // チャット一覧取得
+      const chats = chatFrameDocument.getElementById('item-offset');
 
+      // DOM監視オブジェクト定義
       const observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
-          // console.log('change!!!'); // 変更された時の処理
           pinComment();
-
-          // 削除用クリックイベントの追加
-          addDeletePinnedCommentEvent(doc)
+          addDeletePinnedCommentEvent(chatFrameDocument);
         });
       });
 
-      const config = {
+      // DOM監視オブジェクトコンフィグ
+      const observerConfig = {
         childList: true,
         attributes: true
       };
-      observer.observe(comments, config); // 対象ノードとオブザーバの設定を渡す
+
+      // 監視スタート
+      observer.observe(chats, observerConfig);
     });
   }
 }
+
+/**
+ * コメントを固定
+ */
+function pinComment() {
+  const commentFrame = $('iframe').contents();
+
+  const modelatorComments = commentFrame
+    .find('[aria-label=モデレーター]')
+    .closest('yt-live-chat-text-message-renderer');
+
+  // 他のコメントと固定したコメントをidで区別化
+  modelatorComments.attr('id', 'pinned-comment');
+
+  // モデレータコメントをコメント欄上部に表示
+  commentFrame.find('yt-live-chat-ticker-renderer').after(modelatorComments);
+}
+
+/**
+ * 固定コメント削除イベントの追加
+ *  */
+function addDeletePinnedCommentEvent(document) {
+  $(document).on('click', '#pinned-comment', () => {
+    $(event.target).closest("#pinned-comment").remove();
+  });
+}
+
