@@ -8,7 +8,7 @@
     "description": "The short_name (maximum of 12 characters recommended) is a short version of the app's name."
   },
   "appDescription": {
-    "message": "A Youtube chat of moderater pin on chat window.",
+    "message": "Youtubeチャット欄のスパナマーク付きコメントをコメント一覧に固定できる拡張です。",
     "description": "The description of the application"
   }
 }
