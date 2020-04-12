@@ -3,6 +3,9 @@
 
 const $ = require('jQuery');
 
+const MAX_RETRY = 10;
+let observeCount = 0
+
 // コメント欄読み込み待ち
 const setIntervalId = setInterval(startObserve, 1000);
 
@@ -10,6 +13,12 @@ const setIntervalId = setInterval(startObserve, 1000);
  * DOM監視オブジェクトの設定
  */
 function startObserve() {
+
+  observeCount++;
+  if(observeCount > MAX_RETRY){
+    clearInterval(setIntervalId);
+  }
+
   if ($('#chatframe').length) {
     // setInterval解除
     clearInterval(setIntervalId);
@@ -26,6 +35,7 @@ function startObserve() {
       const observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
           pinComment();
+          restartChatScroll(chatFrameDocument);
           addDeletePinnedCommentEvent(chatFrameDocument);
         });
       });
@@ -57,6 +67,14 @@ function pinComment() {
 
   // モデレータコメントをコメント欄上部に表示
   commentFrame.find('yt-live-chat-ticker-renderer').after(modelatorComments);
+  
+}
+
+/**
+ * チャット欄スクロールの再開
+ */
+function restartChatScroll(document){
+  document.getElementById("show-more").firstElementChild.click();
 }
 
 /**
