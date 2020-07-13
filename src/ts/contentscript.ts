@@ -13,7 +13,6 @@ const setIntervalId = setInterval(startObserve, 1000);
  * DOM監視オブジェクトの設定
  */
 function startObserve() {
-  console.log("load!!");
   observeCount++;
   if (observeCount > MAX_RETRY) {
     clearInterval(setIntervalId);
@@ -67,7 +66,7 @@ function startObserve() {
 /**
  * コメントを固定
  */
-function pinComment() {
+async function pinComment() {
   const commentFrame = $("iframe").contents();
 
   const modelatorComments = commentFrame
@@ -79,6 +78,10 @@ function pinComment() {
 
   // モデレータコメントをコメント欄上部に表示
   commentFrame.find("yt-live-chat-ticker-renderer").after(modelatorComments);
+
+  await sleep(30000);
+
+  modelatorComments.remove();
 }
 
 /**
@@ -101,5 +104,11 @@ function addDeletePinnedCommentEvent(document: Document) {
     if (event) {
       $(event.target).closest("#pinned-comment").remove();
     }
+  });
+}
+
+function sleep(milliseconds: number) {
+  return new Promise<void>((resolve) => {
+    setTimeout(() => resolve(), milliseconds);
   });
 }
