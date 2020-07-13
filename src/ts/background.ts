@@ -3,5 +3,5 @@
 
 // これがないと更新するまでcontentscriptが動かない
 chrome.webNavigation.onHistoryStateUpdated.addListener(() => {
-    chrome.tabs.executeScript(null, { file: 'scripts/contentscript.js' });
+  chrome.tabs.executeScript({ file: "scripts/contentscript.js" });
 });
